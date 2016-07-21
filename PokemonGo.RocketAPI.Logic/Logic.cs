@@ -38,10 +38,17 @@ namespace PokemonGo.RocketAPI.Logic
                 try
                 {
                     await _client.SetServer();
-                    await EvolveAllPokemonWithEnoughCandy();
+                    //   await EvolveAllPokemonWithEnoughCandy();
+                    //
+                    var profile = await _client.GetProfile();
+                    if (profile.Profile != null)
+                    {
+                        Logger.Write($"Playing Profile: {profile.Profile.Username},  {profile.Profile.Team} Team, {profile.Profile.Currency}", LogLevel.Info);
+                    }
+                    //
                     await TransferDuplicatePokemon(true);
                     await RecycleItems();
-                    await RepeatAction(10, async () => await ExecuteFarmingPokestopsAndPokemons(_client));
+                    await RepeatAction(5, async () => await ExecuteFarmingPokestopsAndPokemons(_client));
 
                     /*
                 * Example calls below
@@ -52,6 +59,9 @@ namespace PokemonGo.RocketAPI.Logic
                 var inventory = await _client.GetInventory();
                 var pokemons = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData?.Pokemon).Where(p => p != null && p?.PokemonId > 0);
                 */
+
+
+
                 }
                 catch (Exception ex)
                 {
@@ -82,7 +92,7 @@ namespace PokemonGo.RocketAPI.Logic
 
                 Logger.Write($"Farmed XP: {fortSearch.ExperienceAwarded}, Gems: { fortSearch.GemsAwarded}, Eggs: {fortSearch.PokemonDataEgg} Items: {StringUtils.GetSummedFriendlyNameOfItemAwardList(fortSearch.ItemsAwarded)}", LogLevel.Info);
 
-                await Task.Delay(15000);
+                await Task.Delay(5000);
                 await ExecuteCatchAllNearbyPokemons(client);
             }
         }
@@ -103,7 +113,7 @@ namespace PokemonGo.RocketAPI.Logic
                 CatchPokemonResponse caughtPokemonResponse;
                 do
                 {
-                    if (encounterPokemonResponse?.CaptureProbability.CaptureProbability_.First() < 0.4)
+                    if (encounterPokemonResponse?.CaptureProbability.CaptureProbability_.First() < 0.4 && pokemonCP > 400)
                     {
                         //Throw berry is we can
                         await UseBerry(pokemon.EncounterId, pokemon.SpawnpointId);
@@ -115,7 +125,7 @@ namespace PokemonGo.RocketAPI.Logic
                 while (caughtPokemonResponse.Status == CatchPokemonResponse.Types.CatchStatus.CatchMissed);
 
                 Logger.Write(caughtPokemonResponse.Status == CatchPokemonResponse.Types.CatchStatus.CatchSuccess ? $"We caught a {pokemon.PokemonId} with CP {encounterPokemonResponse?.WildPokemon?.PokemonData?.Cp} using a {pokeball}" : $"{pokemon.PokemonId} with CP {encounterPokemonResponse?.WildPokemon?.PokemonData?.Cp} got away while using a {pokeball}..", LogLevel.Info);
-                await Task.Delay(15000);
+                await Task.Delay(5000);
             }
         }
         
@@ -138,10 +148,11 @@ namespace PokemonGo.RocketAPI.Logic
 
         private async Task TransferDuplicatePokemon(bool keepPokemonsThatCanEvolve = false)
         {
-            var duplicatePokemons = await _inventory.GetDuplicatePokemonToTransfer();
+            var duplicatePokemons = await _inventory.GetDuplicatePokemonToTransfer(_clientSettings.PokemonOfEachToKeep);
 
             foreach (var duplicatePokemon in duplicatePokemons)
             {
+                Logger.Write($"d: {duplicatePokemon.PokemonId}", LogLevel.Info);
                 var transfer = await _client.TransferPokemon(duplicatePokemon.Id);
                 Logger.Write($"Transfer {duplicatePokemon.PokemonId} with {duplicatePokemon.Cp} CP", LogLevel.Info);
                 await Task.Delay(500);

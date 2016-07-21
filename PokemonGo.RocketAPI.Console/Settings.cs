@@ -16,6 +16,7 @@ namespace PokemonGo.RocketAPI.Console
         public string PtcPassword => UserSettings.Default.PtcPassword;
         public double DefaultLatitude => UserSettings.Default.DefaultLatitude;
         public double DefaultLongitude => UserSettings.Default.DefaultLongitude;
+        public int PokemonOfEachToKeep => UserSettings.Default.PokemonOfEachToKeep;
 
         ICollection<KeyValuePair<ItemId, int>> ISettings.itemRecycleFilter
         {

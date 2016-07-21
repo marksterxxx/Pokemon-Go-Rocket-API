@@ -40,7 +40,7 @@ namespace PokemonGo.RocketAPI.Logic
         } 
 
 
-        public async Task<IEnumerable<PokemonData>> GetDuplicatePokemonToTransfer(bool keepPokemonsThatCanEvolve = false)
+        public async Task<IEnumerable<PokemonData>> GetDuplicatePokemonToTransfer(int pokemonOfEachToKeep, bool keepPokemonsThatCanEvolve = false)
         {
             var myPokemon = await GetPokemons();
 
@@ -73,11 +73,11 @@ namespace PokemonGo.RocketAPI.Logic
 
                 return results;
             }
-            
-            return pokemonList
+            var whitelist = new List<string>() { "Pikachu","Mewto"}; //whitelist
+            return pokemonList.Where(p => !whitelist.Contains(p.PokemonId.ToString()))
                 .GroupBy(p => p.PokemonId)
                 .Where(x => x.Count() > 1)
-                .SelectMany(p => p.Where(x => x.Favorite == 0).OrderByDescending(x => x.Cp).ThenBy(n => n.StaminaMax).Skip(1).ToList());
+                .SelectMany(p => p.Where(x => x.Favorite == 0).OrderByDescending(x => x.Cp).ThenBy(n => n.StaminaMax).Skip(pokemonOfEachToKeep).ToList());
         }
 
 
