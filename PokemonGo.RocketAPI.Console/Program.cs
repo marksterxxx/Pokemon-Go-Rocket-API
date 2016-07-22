@@ -8,13 +8,13 @@ namespace PokemonGo.RocketAPI.Console
     {
         static void Main(string[] args)
         {
-            Logger.SetLogger(new Logging.ConsoleLogger(LogLevel.Info));
+            Logger.SetLogger(new ConsoleLogger(LogLevel.Info));
 
             Task.Run(() =>
             {
                 try
                 {
-                    new Logic.Logic(new Settings()).Execute();
+                    new Logic.Logic(new Settings()).Execute().Wait();
                 }
                 catch (PtcOfflineException)
                 {

@@ -97,6 +97,7 @@ namespace PokemonGo.RocketAPI.Console {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+<<<<<<< HEAD
         [global::System.Configuration.DefaultSettingValueAttribute("3")]
         public int PokemonOfEachToKeep {
             get {
@@ -104,6 +105,15 @@ namespace PokemonGo.RocketAPI.Console {
             }
             set {
                 this["PokemonOfEachToKeep"] = value;
+=======
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public double DefaultAltitude {
+            get {
+                return ((double)(this["DefaultAltitude"]));
+            }
+            set {
+                this["DefaultAltitude"] = value;
+>>>>>>> refs/remotes/FeroxRev/master
             }
         }
     }
