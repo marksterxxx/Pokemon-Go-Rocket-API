@@ -76,8 +76,9 @@ namespace PokemonGo.RocketAPI.Logic
 
                 return results;
             }
-            var whitelist = new List<string>() { "Pikachu","Mewto"}; //whitelist
-            return pokemonList.Where(p => !whitelist.Contains(p.PokemonId.ToString()))
+            //var pokemonOfEachToKeep = 2;
+            var whitelist = new List<PokemonId>() { PokemonId.Pikachu,PokemonId.Mewtwo}; //whitelist
+            return pokemonList.Where(p => !whitelist.Contains(p.PokemonId))
                 .GroupBy(p => p.PokemonId)
                 .Where(x => x.Count() > 1)
                 .SelectMany(p => p.Where(x => x.Favorite == 0).OrderByDescending(x => x.Cp).ThenBy(n => n.StaminaMax).Skip(pokemonOfEachToKeep).ToList());
@@ -112,10 +113,19 @@ namespace PokemonGo.RocketAPI.Logic
 
             return pokemonToEvolve;
         }
-        
+
+       
+
+        public async Task<IEnumerable<PlayerStats>> GetPlayerStats()
+         {
+             var inventory = await _client.GetInventory();
+             return inventory.InventoryDelta.InventoryItems
+                 .Select(i => i.InventoryItemData?.PlayerStats)
+                .Where(p => p != null);
+         }
 
 
-        public async Task<IEnumerable<Item>> GetItems()
+    public async Task<IEnumerable<Item>> GetItems()
         {
             var inventory = await _client.GetInventory();
             return inventory.InventoryDelta.InventoryItems

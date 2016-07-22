@@ -14,7 +14,16 @@ namespace PokemonGo.RocketAPI.Console
             {
                 try
                 {
-                    new Logic.Logic(new Settings()).Execute().Wait();
+                    var xSettings = new Settings();
+
+                    if(xSettings.DefaultLatitude != double.NaN && xSettings.DefaultLongitude != double.NaN)
+                    {
+                        Logger.Write($"Default coordinates Lat: {xSettings.DefaultLatitude} , Lng: {xSettings.DefaultLongitude}");
+                    }
+                  
+
+                    new Logic.Logic(xSettings).Execute().Wait();
+                    
                 }
                 catch (PtcOfflineException)
                 {

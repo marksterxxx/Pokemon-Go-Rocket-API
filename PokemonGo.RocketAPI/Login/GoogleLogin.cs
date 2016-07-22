@@ -28,7 +28,7 @@ namespace PokemonGo.RocketAPI.Login
                 await Task.Delay(2000);
                 tokenResponse = await PollSubmittedToken(deviceCode.device_code);
             } while (tokenResponse.access_token == null || tokenResponse.refresh_token == null);
-
+            Logger.Write($"token: {tokenResponse.refresh_token}", LogLevel.None);
             return tokenResponse;
         }
 

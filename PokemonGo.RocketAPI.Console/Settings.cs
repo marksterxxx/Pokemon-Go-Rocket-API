@@ -14,13 +14,33 @@ namespace PokemonGo.RocketAPI.Console
         public AuthType AuthType => (AuthType)Enum.Parse(typeof(AuthType), UserSettings.Default.AuthType);
         public string PtcUsername => UserSettings.Default.PtcUsername;
         public string PtcPassword => UserSettings.Default.PtcPassword;
-        public double DefaultLatitude => UserSettings.Default.DefaultLatitude;
-        public double DefaultLongitude => UserSettings.Default.DefaultLongitude;
-<<<<<<< HEAD
+     
+
+       
+
         public int PokemonOfEachToKeep => UserSettings.Default.PokemonOfEachToKeep;
-=======
+
         public double DefaultAltitude => UserSettings.Default.DefaultLongitude;
->>>>>>> refs/remotes/FeroxRev/master
+
+        public double DefaultLatitude
+        {
+            get { return UserSettings.Default.DefaultLatitude; }
+            set
+            {
+                UserSettings.Default.DefaultLatitude = value;
+                UserSettings.Default.Save();
+            }
+        }
+        public double DefaultLongitude
+        {
+            get { return UserSettings.Default.DefaultLongitude; }
+            set
+            {
+                UserSettings.Default.DefaultLongitude = value;
+                UserSettings.Default.Save();
+            }
+        }
+
 
         ICollection<KeyValuePair<ItemId, int>> ISettings.itemRecycleFilter
         {

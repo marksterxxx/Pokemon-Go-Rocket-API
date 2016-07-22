@@ -24,13 +24,14 @@ namespace PokemonGo.RocketAPI
 		/// </summary>
 		/// <param name="message">The message to log.</param>
 		/// <param name="level">Optional level to log. Default <see cref="LogLevel.Info"/>.</param>
-		public static void Write(string message, LogLevel level = LogLevel.Info)
+		public static void Write(string message, LogLevel level = LogLevel.Info, bool nextLine = true)
 		{
 			if (logger == null)
 				return;
-			logger.Write(message, level);
+			logger.Write(message, level, nextLine);
 		}
-	}
+      
+    }
 
 	public enum LogLevel
 	{

@@ -30,7 +30,7 @@ namespace PokemonGo.RocketAPI.Console
         /// </summary>
         /// <param name="message">The message to log. The current time will be prepended.</param>
         /// <param name="level">Optional. Default <see cref="LogLevel.Info"/>.</param>
-        public void Write(string message, LogLevel level = LogLevel.Info)
+        public void Write(string message, LogLevel level = LogLevel.Info, bool nextLine = true)
         {
             if (level > maxLogLevel)
                 return;
@@ -53,8 +53,16 @@ namespace PokemonGo.RocketAPI.Console
                     System.Console.ForegroundColor = ConsoleColor.White;
                     break;
             }
+            if (nextLine)
+            {
+                System.Console.WriteLine($"[{ DateTime.Now.ToString("HH:mm:ss")}] { message}");
+            }
+            else
+            {
+                System.Console.Write($"{ message}");
+            }
             
-            System.Console.WriteLine($"[{ DateTime.Now.ToString("HH:mm:ss")}] { message}");
         }
+        
     }
 }
