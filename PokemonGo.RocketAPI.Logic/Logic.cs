@@ -60,14 +60,57 @@ namespace PokemonGo.RocketAPI.Logic
                     var inventory = await _client.GetInventory();
                     var playerStats = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData).FirstOrDefault(i => i.PlayerStats != null);
                     //   await EvolveAllPokemonWithEnoughCandy();
+<<<<<<< HEAD
 
                     await myRoutine();
 
 
+=======
+                    //
+                    var profile = await _client.GetProfile();
+                    if (profile.Profile != null)
+                    {
+                        Logger.Write($"Playing Profile: {profile.Profile.Username},  {profile.Profile.Team} Team, {profile.Profile.Currency}", LogLevel.Info);
+                    }
+                    //
+                    await TransferDuplicatePokemon(true);
+                    await RecycleItems();
+<<<<<<< HEAD
+                    await RepeatAction(5, async () => await ExecuteFarmingPokestopsAndPokemons(_client));
+
+                    /*
+                * Example calls below
+                *
+                var profile = await _client.GetProfile();
+                var settings = await _client.GetSettings();
+                var mapObjects = await _client.GetMapObjects();
+                var inventory = await _client.GetInventory();
+                var pokemons = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData?.Pokemon).Where(p => p != null && p?.PokemonId > 0);
+                */
+
+
+
+=======
+                    await ExecuteFarmingPokestopsAndPokemons();
+
+                    /*
+            * Example calls below
+            *
+            var profile = await _client.GetProfile();
+            var settings = await _client.GetSettings();
+            var mapObjects = await _client.GetMapObjects();
+            var inventory = await _client.GetInventory();
+            var pokemons = inventory.InventoryDelta.InventoryItems.Select(i => i.InventoryItemData?.Pokemon).Where(p => p != null && p?.PokemonId > 0);
+            */
+>>>>>>> origin/master
                 }
                 catch (AccessTokenExpiredException)
                 {
                     throw;
+<<<<<<< HEAD
+=======
+>>>>>>> refs/remotes/FeroxRev/master
+>>>>>>> origin/master
                 }
                     await Task.Delay(10000);
             }
@@ -138,6 +181,10 @@ private async Task ExecuteFarmingPokestopsAndPokemons()
                 var fortSearch = await _client.SearchFort(pokeStop.Id, pokeStop.Latitude, pokeStop.Longitude);
                 Logger.Write($"Using Pokestop: {fortInfo.Name} in {Math.Round(distance)}m distance");
                 Logger.Write($"Farmed XP: {fortSearch.ExperienceAwarded}, Gems: { fortSearch.GemsAwarded}, Eggs: {fortSearch.PokemonDataEgg} Items: {StringUtils.GetSummedFriendlyNameOfItemAwardList(fortSearch.ItemsAwarded)}", LogLevel.Info);
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> origin/master
 
                 if (fortSearch.ExperienceAwarded > 0)
                                     {
@@ -145,9 +192,14 @@ private async Task ExecuteFarmingPokestopsAndPokemons()
                                     }
                 await Task.Delay(1000);
                 await ExecuteCatchAllNearbyPokemons();
+<<<<<<< HEAD
 
                await Task.Delay(1000);
             
+=======
+                await TransferDuplicatePokemon(true);
+>>>>>>> refs/remotes/FeroxRev/master
+>>>>>>> origin/master
             }
         }
 
@@ -181,11 +233,34 @@ private async Task ExecuteFarmingPokestopsAndPokemons()
             {
                 if (encounter?.CaptureProbability.CaptureProbability_.First() < 0.35)
                 {
+<<<<<<< HEAD
 
                     //Throw berry is we can
                     await UseBerry(pokemon.EncounterId, pokemon.SpawnpointId);
                 }
 
+=======
+<<<<<<< HEAD
+                    if (encounterPokemonResponse?.CaptureProbability.CaptureProbability_.First() < 0.4 && pokemonCP > 400)
+                    {
+                        //Throw berry is we can
+                        await UseBerry(pokemon.EncounterId, pokemon.SpawnpointId);
+                    }
+
+                    caughtPokemonResponse = await client.CatchPokemon(pokemon.EncounterId, pokemon.SpawnpointId, pokemon.Latitude, pokemon.Longitude, pokeball);
+                    await Task.Delay(2000);
+=======
+                    //Throw berry is we can
+                    await UseBerry(pokemon.EncounterId, pokemon.SpawnpointId);
+>>>>>>> refs/remotes/FeroxRev/master
+                }
+
+<<<<<<< HEAD
+                Logger.Write(caughtPokemonResponse.Status == CatchPokemonResponse.Types.CatchStatus.CatchSuccess ? $"We caught a {pokemon.PokemonId} with CP {encounterPokemonResponse?.WildPokemon?.PokemonData?.Cp} using a {pokeball}" : $"{pokemon.PokemonId} with CP {encounterPokemonResponse?.WildPokemon?.PokemonData?.Cp} got away while using a {pokeball}..", LogLevel.Info);
+                await Task.Delay(5000);
+=======
+                var pokeball = await GetBestBall(encounter?.WildPokemon);
+>>>>>>> origin/master
 
                 var pokeball = await GetBestBall(encounter?.WildPokemon);
                 var distance = Navigation.DistanceBetween2Coordinates(_client.CurrentLat, _client.CurrentLng, pokemon.Latitude, pokemon.Longitude);
@@ -193,6 +268,10 @@ private async Task ExecuteFarmingPokestopsAndPokemons()
                 Logger.Write(caughtPokemonResponse.Status == CatchPokemonResponse.Types.CatchStatus.CatchSuccess ? $"We caught a {pokemon.PokemonId} with CP {encounter?.WildPokemon?.PokemonData?.Cp} ({Perfect(encounter?.WildPokemon?.PokemonData).ToString("0.00")}% perfect) and CaptureProbability: {encounter?.CaptureProbability.CaptureProbability_.First()} using a {pokeball} in {Math.Round(distance)}m distance" : $"{pokemon.PokemonId} with CP {encounter?.WildPokemon?.PokemonData?.Cp} CaptureProbability: {encounter?.CaptureProbability.CaptureProbability_.First()} in {Math.Round(distance)}m distance {caughtPokemonResponse.Status} while using a {pokeball}..", LogLevel.Info);
 
                 await Task.Delay(2000);
+<<<<<<< HEAD
+=======
+>>>>>>> refs/remotes/FeroxRev/master
+>>>>>>> origin/master
             }
             while (caughtPokemonResponse.Status == CatchPokemonResponse.Types.CatchStatus.CatchMissed || caughtPokemonResponse.Status == CatchPokemonResponse.Types.CatchStatus.CatchEscape) ;
             if (caughtPokemonResponse.Status == CatchPokemonResponse.Types.CatchStatus.CatchSuccess)
@@ -227,8 +306,16 @@ private async Task ExecuteFarmingPokestopsAndPokemons()
 
         private async Task TransferDuplicatePokemon(bool keepPokemonsThatCanEvolve = false, float keepPerfectPokemonLimit = 85.0f)
         {
+<<<<<<< HEAD
 
             var duplicatePokemons = await _inventory.GetDuplicatePokemonToTransfer(_clientSettings.PokemonOfEachToKeep);
+=======
+<<<<<<< HEAD
+            var duplicatePokemons = await _inventory.GetDuplicatePokemonToTransfer(_clientSettings.PokemonOfEachToKeep);
+=======
+            var duplicatePokemons = await _inventory.GetDuplicatePokemonToTransfer(keepPokemonsThatCanEvolve);
+>>>>>>> refs/remotes/FeroxRev/master
+>>>>>>> origin/master
 
             Logger.Write($"Transfer pokemon: ", LogLevel.Info);
             foreach (var duplicatePokemon in duplicatePokemons)
